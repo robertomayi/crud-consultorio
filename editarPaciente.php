@@ -1,243 +1,171 @@
-<?php
-session_start();
+<?php 
 
-include("conexion.php");
+    include("conexion.php");
+    $dni = $_GET["dni"];
 
-if (isset($_SESSION['usuario'])) {
-    // El usuario está logeado
-    $nombre_usuario = $_SESSION['usuario'];
-    
-    // Aquí puedes mostrar el contenido de la página principal
-} else {
-    // El usuario no está logeado, redirigir al inicio de sesión
-    header('Location: login.php');
-    exit();
-}
-    //este query lista a los pacientes
-    $sql = "SELECT * FROM tabla_pacientes ";
+    //este query trae el detalle del paciente
+    $sql = "SELECT * FROM tabla_pacientes WHERE DOCUMENTO = '{$dni}' ";
     $query = $GLOBALS['conex']->prepare($sql);
     $query->execute();
     $row = $query->fetchAll(PDO::FETCH_ASSOC);
+    var_dump($row);
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD de Pacientes</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 </head>
 <body>
-
-    <?php include('template/nabvar.php')?>
-
-    <div class="container">
-      
-        <div class="row">
-            <div class="col-md-12 mt-5">
-                <h2 class="text-center">CRUD de Pacientes</h2>
-                <hr>
-                <a class="btn btn-primary" href="crearPaciente.php">Editar</a>
-               
-                <br><br>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>DNI</th>
-                            <th>Fecha</th>
-                            <th>Nombre Paciente</th>
-                            <th>Telefono</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($row as $index => $paciente) :?>
-                        <tr>
-                             <td><?php echo $paciente["DOCUMENTO"]?></td>
-                             <td><?php echo $paciente["FECHA"]?></td>
-                             <td><?php echo $paciente["NOMBRE_PACIENTE"]?></td>
-                             <td><?php echo $paciente["TELEFONO1"]?></td>
-                            <td>
-                                <a class="btn  btn-sm btn-warning" href="editarPaciente.php?dni=<?php echo $paciente["DOCUMENTO"]?>">Editar</a>
-                                <a class="btn  btn-sm btn-danger" href="editarPaciente.php?dni=<?php echo $paciente["DOCUMENTO"]?>">Eliminar</a>
-                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#patientDetailsModal">Ver detalles</button>
-                            </td>
-                        </tr>
-                <?php endforeach?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Agregar Paciente -->
-    <div class="modal fade" id="addPatientModal" tabindex="-1" role="dialog" aria-labelledby="addPatientModalLabel" aria-hidden="true">
-        <!-- Resto del código... -->
-    </div>
-
-<!-- Modal Detalles del Paciente -->
-<div class="modal fade" id="patientDetailsModal" tabindex="-1" role="dialog" aria-labelledby="patientDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="patientDetailsModalLabel">Detalles del Paciente</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+        <div class="container">
+            <h1>Editar Paciente</h1>
+            <hr>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputFecha">Fecha</label>
-                            <input type="text" class="form-control" id="inputFecha" readonly>
+                            <input type="text" class="form-control" id="inputFecha" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputNombre">Nombre Paciente</label>
-                            <input type="text" class="form-control" id="inputNombre" readonly>
+                            <input type="text" class="form-control" id="inputNombre" value="<?php echo $row[0]["NOMBRE_PACIENTE"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputTipoDoc">Tipo Doc</label>
-                            <input type="text" class="form-control" id="inputTipoDoc" readonly>
+                            <input type="text" class="form-control" id="inputTipoDoc" value="<?php echo $row[0]["TIPO_DOC"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputDocumento">Documento</label>
-                            <input type="text" class="form-control" id="inputDocumento" readonly>
+                            <input type="text" class="form-control" id="inputDocumento" value="<?php echo $row[0]["DOCUMENTO"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputDireccionOrigen">Dirección Origen</label>
-                            <input type="text" class="form-control" id="inputDireccionOrigen" readonly>
+                            <input type="text" class="form-control" id="inputDireccionOrigen" value="<?php echo $row[0]["DIRECCION_ORIGEN"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputTelefono1">Teléfono 1</label>
-                            <input type="text" class="form-control" id="inputTelefono1" readonly>
+                            <input type="text" class="form-control" id="inputTelefono1" value="<?php echo $row[0]["TELEFONO1"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputEmail">Email</label>
-                            <input type="text" class="form-control" id="inputEmail" readonly>
+                            <input type="text" class="form-control" id="inputEmail" value="<?php echo $row[0]["EMAIL"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputCiudadOrigen">Ciudad Origen</label>
-                            <input type="text" class="form-control" id="inputCiudadOrigen" readonly>
+                            <input type="text" class="form-control" id="inputCiudadOrigen" value="<?php echo $row[0]["CIUDAD_ORIGEN"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputDeptoOrigen">Dpto de Origen</label>
-                            <input type="text" class="form-control" id="inputDeptoOrigen" readonly>
+                            <input type="text" class="form-control" id="inputDeptoOrigen" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputCiudadDestino">Ciudad Destino</label>
-                            <input type="text" class="form-control" id="inputCiudadDestino" readonly>
+                            <input type="text" class="form-control" id="inputCiudadDestino" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputDeptoDestino">Dpto de Destino</label>
-                            <input type="text" class="form-control" id="inputDeptoDestino" readonly>
+                            <input type="text" class="form-control" id="inputDeptoDestino" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputClinicaHospital">Clínica - Hospital</label>
-                            <input type="text" class="form-control" id="inputClinicaHospital" readonly>
+                            <input type="text" class="form-control" id="inputClinicaHospital" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputAutorizacion">Autorización</label>
-                            <input type="text" class="form-control" id="inputAutorizacion" readonly>
+                            <input type="text" class="form-control" id="inputAutorizacion" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputTotalServicios">Total Servicios Autorizados</label>
-                            <input type="text" class="form-control" id="inputTotalServicios" readonly>
+                            <input type="text" class="form-control" id="inputTotalServicios" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputFechaAutorizacion">Fecha de Autorización</label>
-                            <input type="text" class="form-control" id="inputFechaAutorizacion" readonly>
+                            <input type="text" class="form-control" id="inputFechaAutorizacion" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputFechaVencimiento">Fecha de Vencimiento</label>
-                            <input type="text" class="form-control" id="inputFechaVencimiento" readonly>
+                            <input type="text" class="form-control" id="inputFechaVencimiento" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputHoraRecogida">Hora Recogida</label>
-                            <input type="text" class="form-control" id="inputHoraRecogida" readonly>
+                            <input type="text" class="form-control" id="inputHoraRecogida" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputHoraRetorno">Hora Retorno</label>
-                            <input type="text" class="form-control" id="inputHoraRetorno" readonly>
+                            <input type="text" class="form-control" id="inputHoraRetorno" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputConductor">Conductor</label>
-                            <input type="text" class="form-control" id="inputConductor" readonly>
+                            <input type="text" class="form-control" id="inputConductor" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputTelefonoConductor">Teléfono Conductor</label>
-                            <input type="text" class="form-control" id="inputTelefonoConductor" readonly>
+                            <input type="text" class="form-control" id="inputTelefonoConductor" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-12">
                         <div class="form-group">
                             <label for="inputObservacion">Observación</label>
-                            <textarea class="form-control" id="inputObservacion" rows="3" readonly></textarea>
+                            <textarea class="form-control" id="inputObservacion" rows="3"  readonly><?php echo $row[0]["FECHA"] ?></textarea>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputEstado">Estado</label>
-                            <input type="text" class="form-control" id="inputEstado" readonly>
+                            <input type="text" class="form-control" id="inputEstado" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="inputUsuario">Usuario del Sistema</label>
-                            <input type="text" class="form-control" id="inputUsuario" readonly>
+                            <input type="text" class="form-control" id="inputUsuario" value="<?php echo $row[0]["FECHA"] ?>" readonly>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            </div>
         </div>
-    </div>
-</div>
-
-
-  
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 </body>
 </html>
